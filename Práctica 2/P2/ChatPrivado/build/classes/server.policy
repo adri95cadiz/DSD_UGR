@@ -1,0 +1,4 @@
+grant codeBase "file:/C:/Users/Adri/Downloads/P2/ChatPrivado/build/classes/" {
+    permission java.security.AllPermission;
+};
+

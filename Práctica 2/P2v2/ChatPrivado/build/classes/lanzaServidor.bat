@@ -1,0 +1,1 @@
+"E:\Program Files\Java\jre1.8.0_31\bin\java" -cp . -Djava.rmi.server.codebase=file:/C:/Users/Adri/Downloads/P2/ChatPrivado/build/classes/ -Djava.rmi.server.hostname=localhost -Djava.security.policy=server.policy Servidor Chat

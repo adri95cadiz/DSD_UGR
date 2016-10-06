@@ -1,0 +1,3 @@
+grant codeBase "file:/C:/Users/Adri/Downloads/P2/ChatP2P/" {
+    permission java.security.AllPermission;
+};

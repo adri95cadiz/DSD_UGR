@@ -1,0 +1,4 @@
+grant codeBase "file:/C:/Users/FranciscoJavier/Documents/GitHub/grado_informatica-DSD/P2/ChatPrivado/build/classes/" {
+    permission java.security.AllPermission;
+};
+
