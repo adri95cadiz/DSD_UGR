@@ -1,0 +1,1 @@
+{"numClientes":2,"usuarios":[{"username":"admin","password":"admin","donado":0},{"username":"adri","password":"adri","donado":10}],"dineroDonado":10}
