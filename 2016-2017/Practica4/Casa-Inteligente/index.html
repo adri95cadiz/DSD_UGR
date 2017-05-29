@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Socket.IO Intelligent Home</title>
+        <style>
+            * { margin: 20; padding: 20; box-sizing: border-box; }
+            body { font: 13px Helvetica, Arial; }
+            box { width: 30%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+            form input { border: 0; padding: 10px; width: 30%; margin-right: .5%; }
+            form button { width: 30%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        </style>
+    </head>
+    <body>
+        <button onclick="buttonAC()">Air-Conditioner</button><font id="AC" size="20" color="red">Off</font></br>
+        <button onclick="buttonCurtains()">Curtains</button><font id="Curtain" size="20" color="green">Open</font></br>
+	<box>Luminosity</box><font id="lum" size="20">80%</font></br>
+	<box>Humidity</box><font id="hum" size="20">20%</font></br></br>
+        <button onclick="buttonActualizar()">Actualizar medidas</button></br>
+
+        <!-- JQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+
+        <!-- Cliente socket.io -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+
+		var socket = io();
+		var curtain = true;
+		var ac = false;
+		var humidity = 20;
+
+		// cuando al cliente le llegue un evento cortina actualiza su estado
+	  	socket.on('curtain on-off', function(onoff){
+			if(onoff == false){
+				document.getElementById('Curtain').innerHTML = $('Closed');
+				document.getElementById('Curtain').style.color = "red";
+				curtain = false;
+			} else {
+				document.getElementById('Curtain').innerHTML = $('Open');
+				document.getElementById('Curtain').style.color = "green";
+				curtain = true;
+			}
+	  	});
+
+		// cuando al cliente le llegue un evento aire acondicionado actualiza su estado
+	  	socket.on('a-c on-off', function(onoff){
+			if(onoff == false){
+				document.getElementById('AC').innerHTML = $('Off');
+				document.getElementById('AC').style.color = "red";
+				ac = false;
+			} else {
+				document.getElementById('AC').innerHTML = $('On');
+				document.getElementById('AC').style.color = "green";
+				ac = true;
+			}
+	  	});
+
+		// cuando al cliente le llegue un evento luminosidad actualiza su estado
+	  	socket.on('luminosity', function(lum){
+				document.getElementById('lum').innerHTML = $(lum+'%');
+	  	});
+
+		// cuando al cliente le llegue un evento humedad actualiza su estado
+	  	socket.on('humidity', function(hum){
+				document.getElementById('hum').innerHTML = $(hum+'%');
+	  	});
+		
+		function buttonAC(){
+			socket.emit('a-c on-off', !ac);
+		}
+
+		function buttonCurtains(){
+			socket.emit('curtain on-off', !curtain);
+		}
+
+		function buttonActualizar(){
+			var luz = Math.floor(Math.random() * 20) + 80;
+			if(curtain == false){
+				luz = luz-60;
+			}  
+			socket.emit('luminosity', luz);
+			if(ac == true){
+				humidity = humidity + Math.floor(Math.random() * 5);
+			} else {
+				humidity = humidity - Math.floor(Math.random() * 5);
+			}
+			socket.emit('humidity', humidity);
+		}
+
+		function actualizarLista(usuarios){
+			var listContainer = document.getElementById('resultados');
+			listContainer.innerHTML = '';
+			var listElement = document.createElement('ul');
+			listContainer.appendChild(listElement);
+			var num = usuarios.length;
+			for(var i=0; i<num; i++) {
+			    var listItem = document.createElement('li');
+			    listItem.innerHTML = JSON.stringify(usuarios[i]);
+			    listElement.appendChild(listItem);
+			}
+		}
+
+		// si se desconecta lo mostramos en la consola
+	  	socket.on('disconnect', function(){
+	    		console.log('user disconnected');
+			actualizarLista({});
+	  	});
+
+		socket.on('obtener', function(data) {
+			actualizarLista(data);
+		});
+
+		socket.on('all-connections', function(data) {
+			actualizarLista(data);
+		});
+
+        </script>
+    </body>
+</html>
